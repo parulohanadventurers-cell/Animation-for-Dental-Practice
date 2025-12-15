@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Animations Showcase</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #050505;
+            color: #D4AF37;
+            font-family: 'Cinzel', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .animation-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1 / 1;
+            position: relative;
+        }
+
+        .animation-card iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .card-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 10px;
+            color: #555;
+            font-family: sans-serif;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <h1>Luxury Animation Suite</h1>
+
+    <div class="grid-container">
+
+        <!-- 2 -->
+        <div class="animation-card">
+            <iframe src="submit/Ascending_Mastery_Bars.html" loading="lazy"></iframe>
+            <div class="card-label">Ascending_Mastery_Bars</div>
+        </div>
+
+        <!-- 4 -->
+        <div class="animation-card">
+            <iframe src="submit/Digital_Orbit_Scan.html" loading="lazy"></iframe>
+            <div class="card-label">Digital_Orbit_Scan</div>
+        </div>
+        <!-- 5 -->
+        <div class="animation-card">
+            <iframe src="submit/Drafted_Precision_Lab.html" loading="lazy"></iframe>
+            <div class="card-label">Drafted_Precision_Lab</div>
+        </div>
+        <!-- 6 -->
+        <div class="animation-card">
+            <iframe src="submit/Layered_Assurance_Shield.html" loading="lazy"></iframe>
+            <div class="card-label">Layered_Assurance_Shield</div>
+        </div>
+        <!-- 7 -->
+        <div class="animation-card">
+            <iframe src="submit/Precision_Arc_Sweep.html" loading="lazy"></iframe>
+            <div class="card-label">Precision_Arc_Sweep</div>
+        </div>
+        <!-- 8 -->
+        <div class="animation-card">
+            <iframe src="submit/Precision_Shield_Convergence.html" loading="lazy"></iframe>
+            <div class="card-label">Precision_Shield_Convergence</div>
+        </div>
+
+        <!-- 10 -->
+        <div class="animation-card">
+            <iframe src="submit/Seamless_Flow_Geometry.html" loading="lazy"></iframe>
+            <div class="card-label">Seamless_Flow_Geometry</div>
+        </div>
+    </div>
+
+</body>
+
+</html>
