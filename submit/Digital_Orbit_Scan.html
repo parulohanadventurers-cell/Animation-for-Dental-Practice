@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Orbit Scan | Advanced Technology</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --gold-primary: #D4AF37;
+            --gold-light: #F7E7CE;
+            --gold-dark: #8A6E2F;
+            --text-gold: #C5A028;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+
+        svg {
+            width: 300px;
+            height: 300px;
+            overflow: visible;
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.3));
+        }
+
+        /* Definitions */
+        .gold-stroke {
+            stroke: url(#luxuryGoldGradient);
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .orbit-ring {
+            stroke-width: 1.5;
+            object-fit: contain;
+            transform-origin: center;
+            opacity: 0;
+        }
+
+        .center-dot {
+            fill: url(#luxuryGoldGradient);
+            opacity: 0;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+            transform-origin: center;
+        }
+
+        /* Scan Line */
+        .scan-line {
+            stroke: url(#scanGradient);
+            stroke-width: 1;
+            /* Thinner */
+            opacity: 0;
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+        }
+
+        .label-text {
+            margin-top: 50px;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-gold);
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #8A6E2F, #FFD700, #F7E7CE, #8A6E2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            position: relative;
+        }
+
+        /* Removed Shimmer Layer CSS */
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="scene-container" id="scene">
+        <svg viewBox="0 0 200 200">
+            <defs>
+                <linearGradient id="luxuryGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#996515" />
+                    <stop offset="30%" stop-color="#D4AF37" />
+                    <stop offset="50%" stop-color="#FFFFE0" />
+                    <stop offset="70%" stop-color="#D4AF37" />
+                    <stop offset="100%" stop-color="#8A6E2F" />
+                </linearGradient>
+
+                <linearGradient id="scanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgba(212, 175, 55, 0)" />
+                    <stop offset="20%" stop-color="rgba(255, 215, 0, 0.4)" />
+                    <stop offset="50%" stop-color="rgba(255, 255, 240, 0.9)" />
+                    <stop offset="80%" stop-color="rgba(255, 215, 0, 0.4)" />
+                    <stop offset="100%" stop-color="rgba(212, 175, 55, 0)" />
+                </linearGradient>
+            </defs>
+
+            <!-- Orbit Rings -->
+            <circle id="orbit1" class="gold-stroke orbit-ring" cx="100" cy="100" r="80" stroke-dasharray="20 10" />
+            <path id="orbit2" class="gold-stroke orbit-ring" d="M 100 30 A 70 70 0 0 1 170 100" />
+            <path id="orbit2b" class="gold-stroke orbit-ring" d="M 100 170 A 70 70 0 0 1 30 100" />
+            <circle id="orbit3" class="gold-stroke orbit-ring" cx="100" cy="100" r="40" stroke-opacity="0.6" />
+
+            <!-- Scan Line -->
+            <line id="scanLine" class="scan-line" x1="0" y1="20" x2="200" y2="20" />
+
+            <!-- Center Dot -->
+            <circle id="dot" class="center-dot" cx="100" cy="100" r="4" />
+
+            <!-- Precise Lock Brackets -->
+            <path id="lockBrackets" class="gold-stroke" stroke-width="1.5"
+                d="M 90 90 L 90 85 L 110 85 L 110 90  M 90 110 L 90 115 L 110 115 L 110 110"
+                style="opacity: 0; transform-origin: center;" />
+
+        </svg>
+
+        <div class="label-text" id="label">Advanced Technology</div>
+        <!-- Removed Shimmer Div -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+
+            const orbits = [
+                document.getElementById('orbit1'),
+                document.getElementById('orbit2'),
+                document.getElementById('orbit2b'),
+                document.getElementById('orbit3')
+            ];
+            const scanLine = document.getElementById('scanLine');
+            const dot = document.getElementById('dot');
+            const brackets = document.getElementById('lockBrackets');
+            const label = document.getElementById('label');
+            // Removed Shimmer Reference
+
+            function playSequence() {
+                // --- RESET STATE ---
+                scene.style.opacity = '1';
+                scene.style.transition = 'opacity 1s ease';
+
+                orbits.forEach(o => {
+                    o.style.transition = 'none';
+                    o.style.opacity = '0';
+                    o.style.transform = 'rotate(0deg)';
+                });
+
+                scanLine.style.transition = 'none';
+                scanLine.style.opacity = '0';
+                scanLine.style.transform = 'translateY(0)';
+
+                dot.style.transition = 'none';
+                dot.style.opacity = '0';
+                dot.style.transform = 'scale(0.5)';
+
+                brackets.style.transition = 'none';
+                brackets.style.opacity = '0';
+                brackets.style.transform = 'scale(1.4)';
+
+                label.style.transition = 'none';
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(20px)';
+
+                void scene.offsetWidth; // Reflow
+
+                // --- 1. Orbits Fade In & Rotate ---
+                orbits.forEach((o, i) => {
+                    o.style.transition = 'opacity 1s ease';
+                    o.style.opacity = '1';
+
+                    let dir = (i % 2 === 0) ? 1 : -1;
+                    let speed = 20000 + (i * 5000);
+                    o.animate([
+                        { transform: 'rotate(0deg)' },
+                        { transform: `rotate(${360 * dir}deg)` }
+                    ], {
+                        duration: speed,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+                });
+
+                // --- 2. Scan Line Passes Across ---
+                setTimeout(() => {
+                    scanLine.style.opacity = '0.7';
+                    scanLine.animate([
+                        { transform: 'translateY(0px)', opacity: 0 },
+                        { transform: 'translateY(20px)', opacity: 0.6, offset: 0.1 },
+                        { transform: 'translateY(160px)', opacity: 0.6, offset: 0.9 },
+                        { transform: 'translateY(180px)', opacity: 0 }
+                    ], {
+                        duration: 2000,
+                        easing: 'ease-in-out',
+                        fill: 'forwards'
+                    });
+
+                    // --- 3. Dot "Locks" & Synchronous Snap ---
+                    setTimeout(() => {
+                        dot.style.transition = 'opacity 0.2s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                        dot.style.opacity = '1';
+                        dot.style.transform = 'scale(1)';
+
+                        brackets.style.transition = 'opacity 0.2s ease, transform 0.3s ease-out';
+                        brackets.style.opacity = '1';
+                        brackets.style.transform = 'scale(1)';
+
+                    }, 1000);
+
+                }, 800);
+
+                // --- 4. Label Reveal (No Shimmer) ---
+                setTimeout(() => {
+                    label.style.transition = 'opacity 1s ease, transform 1s ease';
+                    label.style.opacity = '1';
+                    label.style.transform = 'translateY(0)';
+
+                    label.animate([
+                        { backgroundPosition: '200% center' },
+                        { backgroundPosition: '-200% center' }
+                    ], {
+                        duration: 4000,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+
+                    // Removed Shimmer Animation
+                }, 2800);
+
+                // --- 5. LOOP ---
+                setTimeout(() => {
+                    scene.style.opacity = '0';
+                }, 7500);
+
+                setTimeout(() => {
+                    playSequence();
+                }, 8500);
+            }
+
+            setTimeout(playSequence, 100);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precision Shield Convergence | Specialist-Led Team</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --gold-primary: #D4AF37;
+            --gold-light: #F7E7CE;
+            --gold-shadow: #8A6E2F;
+            --text-gold: #C5A028;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+            /* For loop fade out */
+        }
+
+        svg {
+            width: 300px;
+            height: 300px;
+            overflow: visible;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+        }
+
+        /* Gold Definitions */
+        .gold-stroke {
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .gold-fill {
+            fill: url(#luxuryGoldGradient);
+        }
+
+        .converging-line {
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            opacity: 0;
+        }
+
+        /* Shield Outline */
+        .shield-path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            opacity: 0;
+        }
+
+        .center-dot {
+            opacity: 0;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+        }
+
+        .label-text {
+            margin-top: 50px;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-gold);
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #8A6E2F, #FFD700, #F7E7CE, #8A6E2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            position: relative;
+        }
+
+        /* Shimmer removed */
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="scene-container" id="scene">
+        <svg viewBox="0 0 200 200">
+            <defs>
+                <linearGradient id="luxuryGoldGradient" x1="0%" y1="0%" x2="100%" y2="0%"
+                    gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#996515" />
+                    <stop offset="25%" stop-color="#D4AF37" />
+                    <stop offset="50%" stop-color="#FFFFF0" />
+                    <stop offset="75%" stop-color="#D4AF37" />
+                    <stop offset="100%" stop-color="#996515" />
+                </linearGradient>
+            </defs>
+
+            <line id="line1" class="converging-line" x1="100" y1="0" x2="100" y2="95" />
+            <line id="line2" class="converging-line" x1="186" y1="150" x2="100" y2="95" />
+            <line id="line3" class="converging-line" x1="14" y1="150" x2="100" y2="95" />
+
+            <path id="shield" class="shield-path gold-stroke" d="M 40 50 
+                     L 160 50 
+                     Q 160 130 100 170 
+                     Q 40 130 40 50 Z" />
+
+            <circle id="dot" class="center-dot gold-fill" cx="100" cy="95" r="3" />
+        </svg>
+
+        <div class="label-text" id="label">Specialist-Led Team</div>
+        <!-- Shimmer removed -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+            const shield = document.getElementById('shield');
+            const dot = document.getElementById('dot');
+            const label = document.getElementById('label');
+            /* shimmer removed */
+
+            const l1 = document.getElementById('line1');
+            const l2 = document.getElementById('line2');
+            const l3 = document.getElementById('line3');
+            const lines = [l1, l2, l3];
+
+            // Setup
+            const len = shield.getTotalLength();
+            shield.style.strokeDasharray = len;
+
+            function runAnimationSequence() {
+                // RESET STATE
+                scene.style.transition = 'none';
+                scene.style.opacity = '1';
+
+                // Reset Lines
+                // Move them "Out"
+                l1.style.transform = 'translateY(-100px)';
+                l2.style.transform = 'translate(86px, 55px)';
+                l3.style.transform = 'translate(-86px, 55px)';
+
+                lines.forEach(l => {
+                    l.style.transition = 'none'; // Snap out
+                    l.style.opacity = '0';
+                });
+
+                // Reset Shield
+                shield.style.transition = 'none';
+                shield.style.strokeDashoffset = len;
+                shield.style.opacity = '0';
+
+                // Reset Dot & Label & Shimmer
+                dot.style.transition = 'none';
+                dot.style.opacity = '0';
+
+                label.style.transition = 'none';
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(20px)';
+
+                /* shimmer reset removed */
+
+                // Force Reflow
+                void scene.offsetWidth;
+
+                // 1. START: Lines Slide to Center
+                lines.forEach(l => {
+                    l.style.transition = 'transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease';
+                    l.style.opacity = '1';
+                    l.style.transform = 'translate(0, 0)';
+                });
+
+                // 2. CROSSFADE: Lines fade out -> Shield fades in & draws
+                setTimeout(() => {
+                    // Lines Fade Out
+                    lines.forEach(l => {
+                        l.style.transition = 'opacity 0.6s ease';
+                        l.style.opacity = '0';
+                    });
+
+                    // Shield Fades In & Draws
+                    shield.style.transition = 'opacity 0.6s ease, stroke-dashoffset 2s ease-in-out';
+                    shield.style.opacity = '1';
+                    shield.style.strokeDashoffset = '0';
+
+                }, 1400); // Just before lines fully settle/stop
+
+                // 3. DOT APPEARS
+                setTimeout(() => {
+                    dot.style.transition = 'opacity 1.5s ease';
+                    dot.style.opacity = '1';
+                }, 2800);
+
+                // 4. LABEL & SHIMMER
+                setTimeout(() => {
+                    label.style.transition = 'opacity 1.2s ease-out, transform 1.2s ease-out';
+                    label.style.opacity = '1';
+                    label.style.transform = 'translateY(0)';
+
+                    // Trigger keyframe animations (handled by CSS class usually, or WAAPI)
+                    label.animate([
+                        { backgroundPosition: '200% center' },
+                        { backgroundPosition: '-200% center' }
+                    ], {
+                        duration: 4000,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+
+                    /* shimmer animation removed */
+
+                }, 3500);
+
+                // 5. LOOP: Fade Out All and Restart
+                setTimeout(() => {
+                    scene.style.transition = 'opacity 1s ease';
+                    scene.style.opacity = '0'; // Fade out entire container
+                }, 8000); // Reading phase duration
+
+                setTimeout(() => {
+                    runAnimationSequence(); // Restart
+                }, 9000); // 1s after fade out
+            }
+
+            // Init
+            setTimeout(runAnimationSequence, 100);
+        });
+    </script>
+</body>
+
+</html>

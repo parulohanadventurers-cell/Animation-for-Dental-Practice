@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drafted Precision Lab | State-of-the-Art On-Site Lab</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --gold-primary: #D4AF37;
+            --gold-light: #F7E7CE;
+            --gold-dark: #8A6E2F;
+            --text-gold: #C5A028;
+            --draft-color: #fffdfd;
+            /* Dark grey for construction lines */
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+
+        svg {
+            width: 300px;
+            height: 300px;
+            overflow: visible;
+        }
+
+        /* Gradient Definitions for reference in JS/HTML */
+
+        .draft-line {
+            stroke: var(--draft-color);
+            stroke-width: 0.5;
+            fill: none;
+            stroke-dasharray: 2, 2;
+            /* Architectural sketch style */
+            opacity: 0;
+        }
+
+        .shield-construction-path {
+            stroke: var(--draft-color);
+            stroke-width: 0.5;
+            fill: none;
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
+            opacity: 0.5;
+        }
+
+        .shield-final {
+            fill: none;
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            opacity: 0;
+            /* Filter for subtle glow */
+            filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.5));
+        }
+
+        /* The shine effect overlay */
+        .shield-shine {
+            fill: none;
+            stroke: url(#shineGradient);
+            stroke-width: 2;
+            /* Matches final shield */
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0;
+            mix-blend-mode: overlay;
+            /* or screen */
+        }
+
+        .label-text {
+            margin-top: 50px;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-gold);
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #8A6E2F, #FFD700, #F7E7CE, #8A6E2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="scene-container" id="scene">
+        <svg viewBox="0 0 200 200">
+            <defs>
+                <linearGradient id="luxuryGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#996515" />
+                    <stop offset="30%" stop-color="#D4AF37" />
+                    <stop offset="50%" stop-color="#FFFFE0" />
+                    <stop offset="70%" stop-color="#D4AF37" />
+                    <stop offset="100%" stop-color="#8A6E2F" />
+                </linearGradient>
+
+                <!-- Gradient for the 'Light shines down' effect -->
+                <!-- Vertical gradient that we will animate transform of -->
+                <linearGradient id="shineGradient" x1="0%" y1="0%" x2="0%" y2="100%" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="transparent" />
+                    <stop offset="10%" stop-color="rgba(255, 255, 255, 0.8)" />
+                    <stop offset="20%" stop-color="transparent" />
+                    <!-- The gradient is small, we will move it down -->
+                </linearGradient>
+            </defs>
+
+            <!-- Grid/Drafting Lines -->
+            <g id="draftingLines">
+                <!-- Vertical Guides -->
+                <line class="draft-line" x1="60" y1="20" x2="60" y2="180" />
+                <line class="draft-line" x1="140" y1="20" x2="140" y2="180" />
+                <line class="draft-line" x1="100" y1="20" x2="100" y2="180" />
+
+                <!-- Horizontal Guides -->
+                <line class="draft-line" x1="40" y1="50" x2="160" y2="50" />
+                <line class="draft-line" x1="40" y1="110" x2="160" y2="110" />
+
+                <!-- Construction Arcs at corners -->
+                <circle class="draft-line" cx="60" cy="50" r="10" stroke-dasharray="2,2" />
+                <circle class="draft-line" cx="140" cy="50" r="10" stroke-dasharray="2,2" />
+                <circle class="draft-line" cx="100" cy="180" r="10" stroke-dasharray="2,2" />
+            </g>
+
+            <!-- Sketchy Shield Path (Construction) -->
+            <path id="shieldSketch" class="shield-construction-path"
+                d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+
+            <!-- Final Shield Path -->
+            <path id="shieldFinal" class="shield-final"
+                d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+
+            <!-- Shine Overlay Shield Path -->
+            <!-- Same path, used for the light effect -->
+            <path id="shieldShine" class="shield-shine"
+                d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+
+        </svg>
+
+        <div class="label-text" id="label">State-of-the-Art On-Site Lab</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+            const draftLines = document.querySelectorAll('.draft-line');
+            const shieldSketch = document.getElementById('shieldSketch');
+            const shieldFinal = document.getElementById('shieldFinal');
+            const shieldShine = document.getElementById('shieldShine');
+            const shineGradient = document.getElementById('shineGradient');
+            const label = document.getElementById('label');
+
+            function playSequence() {
+                // RESET
+                scene.style.opacity = '1';
+                scene.style.transition = 'opacity 1s ease';
+
+                draftLines.forEach(line => {
+                    line.style.transition = 'none';
+                    line.style.opacity = '0';
+                    line.style.strokeDashoffset = '0'; // reset dash
+                });
+
+                shieldSketch.style.transition = 'none';
+                shieldSketch.style.opacity = '0';
+                shieldSketch.style.strokeDashoffset = '300'; // hidden
+
+                shieldFinal.style.transition = 'none';
+                shieldFinal.style.opacity = '0';
+                shieldFinal.style.strokeDashoffset = '400';
+
+                shieldShine.style.transition = 'none';
+                shieldShine.style.opacity = '0';
+
+                label.style.transition = 'none';
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(20px)';
+
+                // Stop any previous RAF or animations if needed (simple timeout logic here)
+
+                // 1. Drafting Lines Appear (Technical feel)
+                // Rapid sequence of lines appearing
+                draftLines.forEach((line, i) => {
+                    setTimeout(() => {
+                        line.style.transition = 'opacity 0.3s ease';
+                        line.style.opacity = '0.5';
+                    }, 100 + (i * 150));
+                });
+
+                // 2. Shield Construction Sketch
+                setTimeout(() => {
+                    shieldSketch.style.transition = 'stroke-dashoffset 1.5s ease-in-out, opacity 0.5s ease';
+                    shieldSketch.style.opacity = '0.6';
+                    shieldSketch.style.strokeDashoffset = '0';
+                }, 1200);
+
+                // 3. Final Gold Stroke Sweeps (Shield Finalizing)
+                setTimeout(() => {
+                    shieldFinal.style.opacity = '1';
+                    shieldFinal.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.25, 1, 0.5, 1)';
+                    shieldFinal.style.strokeDashoffset = '0';
+
+                    // Fade out construction lines slightly as final form takes over
+                    draftLines.forEach(line => {
+                        line.style.transition = 'opacity 1s ease';
+                        line.style.opacity = '0.1';
+                    });
+                    shieldSketch.style.transition = 'opacity 1s ease';
+                    shieldSketch.style.opacity = '0.2';
+                }, 2200);
+
+                // 4. Label Fades In
+                setTimeout(() => {
+                    label.style.transition = 'opacity 1s ease, transform 1s ease';
+                    label.style.opacity = '1';
+                    label.style.transform = 'translateY(0)';
+
+                    // Label Gradient Shimmer
+                    label.animate([
+                        { backgroundPosition: '200% center' },
+                        { backgroundPosition: '-200% center' }
+                    ], {
+                        duration: 4000,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+                }, 3000);
+
+                // 5. Light Shining Down Effect
+                // Start a recurring animation for the shine
+                setTimeout(() => {
+                    shieldShine.style.opacity = '0.8';
+
+                    // We animate the gradient transform (actually y1/y2 of the gradient would be easier if we select the gradient element, 
+                    // but standard CSS keyframes on SVG attributes are tricky.
+                    // Better to animate the gradientTransform attribute via JS or Web Animation API on the gradient element.
+
+                    // Let's use JS RequestAnimationFrame or animate() on the element if we were moving the element.
+                    // But here we need to move the gradient pattern down.
+                    // We can simply change y1 and y2 of the gradient. 
+
+                    animateShine();
+                }, 3500);
+
+                // LOOP
+                setTimeout(() => {
+                    scene.style.opacity = '0';
+                }, 9000);
+
+                setTimeout(() => {
+                    playSequence();
+                }, 10000);
+            }
+
+            function animateShine() {
+                // Animate the gradient coordinates to simulate light passing down
+                // The shineGradient is <linearGradient id="shineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                // We want the 'stops' to move or the gradient units.
+                // Actually, simpler: animate 'gradientTransform' 
+
+                // Let's attach an animation to the gradient element directly using element.animate if supported for attributes,
+                // or just manually interpolate.
+                // Standard SVG animation <animateTransform> works best inside the defs, but we are in JS control.
+                // Let's use a CSS keyframe approach on the path itself? No, mask-image is complex.
+
+                // Option: The shield-shine path has a stroke of url(#shineGradient).
+                // If we set gradientUnits="userSpaceOnUse", the coordinates are absolute.
+                // We can animate the y1/y2 from -50 to 250.
+
+                const start = performance.now();
+                const duration = 2000; // time for one pass
+
+                function frame(time) {
+                    // Check if scene is still active/visible to avoid infinite loop cost?
+                    // Ideally we use a clean interval logic.
+
+                    // Simple repeating animation loop for the shine
+                    const elapsed = (time - start) % 4000; // 4s loop (2s active, 2s pause)
+
+                    if (elapsed < 2000) {
+                        const progress = elapsed / 2000;
+                        // Move from y = -50 (top) to y = 250 (bottom)
+                        const pos = -50 + (progress * 300);
+
+                        // userSpaceOnUse gradient coordinates
+                        shineGradient.setAttribute('y1', pos);
+                        shineGradient.setAttribute('y2', pos + 50); // Gradient length 50
+                    } else {
+                        // Reset off screen
+                        shineGradient.setAttribute('y1', -100);
+                        shineGradient.setAttribute('y2', -50);
+                    }
+
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            }
+
+            setTimeout(playSequence, 100);
+        });
+    </script>
+</body>
+
+</html>

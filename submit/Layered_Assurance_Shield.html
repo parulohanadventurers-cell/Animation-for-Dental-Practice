@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layered Assurance Shield | Doctor-Backed Warranty</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --gold-primary: #D4AF37;
+            --gold-light: #F7E7CE;
+            --gold-dark: #8A6E2F;
+            --text-gold: #C5A028;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+
+        svg {
+            width: 300px;
+            height: 300px;
+            overflow: visible;
+        }
+
+        /* Definitions */
+        .shield-echo {
+            stroke: url(#luxuryGoldGradient);
+            fill: none;
+            stroke-width: 1;
+            opacity: 0;
+            transform-origin: 100px 105px;
+            pointer-events: none;
+        }
+
+        .shield-main {
+            fill: rgba(212, 175, 55, 0.05);
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            opacity: 0;
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.3));
+        }
+
+        .shine-effect {
+            fill: none;
+            stroke: url(#shineGradient);
+            stroke-width: 2;
+            mix-blend-mode: overlay;
+            opacity: 0;
+            pointer-events: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .label-text {
+            margin-top: 50px;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-gold);
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #8A6E2F, #FFD700, #F7E7CE, #8A6E2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="scene-container" id="scene">
+        <svg viewBox="0 0 200 200">
+            <defs>
+                <linearGradient id="luxuryGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#996515" />
+                    <stop offset="30%" stop-color="#D4AF37" />
+                    <stop offset="50%" stop-color="#FFFFE0" />
+                    <stop offset="70%" stop-color="#D4AF37" />
+                    <stop offset="100%" stop-color="#8A6E2F" />
+                </linearGradient>
+
+                <linearGradient id="shineGradient" x1="0%" y1="0%" x2="0%" y2="100%" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="transparent" />
+                    <stop offset="10%" stop-color="rgba(255, 255, 255, 0.9)" />
+                    <stop offset="20%" stop-color="transparent" />
+                </linearGradient>
+            </defs>
+
+            <!-- Shield Echoes (Radiating Outwards from Shield) -->
+            <g id="shieldEchoGroup">
+                <path class="shield-echo"
+                    d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+                <path class="shield-echo"
+                    d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+                <path class="shield-echo"
+                    d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+            </g>
+
+            <!-- Main Shield (Front/Smallest) -->
+            <path id="mainShield" class="shield-main"
+                d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+
+            <!-- Shine Overlay (Matches Main Shield) -->
+            <path id="mainShieldShine" class="shine-effect"
+                d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+
+        </svg>
+
+        <div class="label-text" id="label">Doctor-Backed Warranty</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+            const echoes = document.querySelectorAll('.shield-echo');
+            const mainShield = document.getElementById('mainShield');
+            const mainShieldShine = document.getElementById('mainShieldShine');
+            const label = document.getElementById('label');
+            const shineGradient = document.getElementById('shineGradient');
+
+            function playSequence() {
+                // RESET
+                scene.style.opacity = '1';
+                scene.style.transition = 'opacity 1s ease';
+
+                echoes.forEach(e => {
+                    e.style.animation = 'none';
+                    e.style.opacity = '0';
+                });
+
+                mainShield.style.transition = 'none';
+                mainShield.style.opacity = '0';
+                mainShield.style.strokeDashoffset = '400';
+
+                label.style.transition = 'none';
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(20px)';
+
+                mainShieldShine.style.opacity = '0';
+
+                // 1. Layers (Echoes) Ripple
+                setTimeout(() => {
+                    echoes.forEach((e, i) => {
+                        e.style.animation = `shieldRipple 3s ease-out infinite ${i * 0.4}s`;
+                    });
+                }, 200);
+
+                // 2. Shield Draws (Stroke)
+                setTimeout(() => {
+                    mainShield.style.opacity = '1';
+                    mainShield.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.25, 1, 0.5, 1)';
+                    mainShield.style.strokeDashoffset = '0';
+                }, 600);
+
+                // 3. Gold Shimmer (Light Pass)
+                setTimeout(() => {
+                    mainShieldShine.style.opacity = '0.8';
+                    animateShine();
+                }, 2200);
+
+                // 4. Label Fade In
+                setTimeout(() => {
+                    label.style.transition = 'opacity 1s ease, transform 1s ease';
+                    label.style.opacity = '1';
+                    label.style.transform = 'translateY(0)';
+
+                    label.animate([
+                        { backgroundPosition: '200% center' },
+                        { backgroundPosition: '-200% center' }
+                    ], {
+                        duration: 4000,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+                }, 2500);
+
+                // Loop
+                setTimeout(() => {
+                    scene.style.opacity = '0';
+                }, 9000);
+
+                setTimeout(() => {
+                    playSequence();
+                }, 10000);
+            }
+
+            function animateShine() {
+                const start = performance.now();
+                function frame(time) {
+                    const elapsed = (time - start) % 3500;
+                    if (elapsed < 1500) {
+                        const progress = elapsed / 1500;
+                        const startY = -50;
+                        const endY = 250;
+                        const pos = startY + (progress * (endY - startY));
+
+                        shineGradient.setAttribute('y1', pos);
+                        shineGradient.setAttribute('y2', pos + 60);
+                    } else {
+                        shineGradient.setAttribute('y1', -100);
+                        shineGradient.setAttribute('y2', -40);
+                    }
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            }
+
+            // Add Keyframe for Ripple via JS
+            const styleSheet = document.createElement("style");
+            styleSheet.innerText = `
+                @keyframes shieldRipple {
+                    0% {
+                        opacity: 0;
+                        transform: scale(0.95);
+                        stroke-width: 2;
+                    }
+                    30% {
+                        opacity: 0.5;
+                    }
+                    100% {
+                        opacity: 0;
+                        transform: scale(1.4);
+                        stroke-width: 0.5;
+                    }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+
+            setTimeout(playSequence, 100);
+        });
+    </script>
+</body>
+
+</html>

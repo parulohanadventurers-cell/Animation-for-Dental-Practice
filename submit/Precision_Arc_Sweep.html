@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Precision Arc Sweep | Faster Results, Fewer Visits</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --gold-primary: #D4AF37;
+            --gold-light: #F7E7CE;
+            --gold-dark: #8A6E2F;
+            --text-gold: #C5A028;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+
+        svg {
+            width: 300px;
+            height: 300px;
+            overflow: visible;
+        }
+
+        .shield-base {
+            fill: rgba(212, 175, 55, 0.05);
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 1;
+            /* Thin refined line */
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            opacity: 0;
+            transform-origin: center;
+        }
+
+        .precision-arc {
+            fill: none;
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 300;
+            /* Approx length of arc */
+            stroke-dashoffset: 300;
+            opacity: 0;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+        }
+
+        .arc-guide {
+            fill: none;
+            stroke: #333;
+            stroke-width: 1;
+            stroke-dasharray: 4, 4;
+            opacity: 0.3;
+        }
+
+        .shine-effect {
+            fill: none;
+            stroke: url(#shineGradient);
+            stroke-width: 2;
+            mix-blend-mode: overlay;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .label-text {
+            margin-top: 50px;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-gold);
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #8A6E2F, #FFD700, #F7E7CE, #8A6E2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="scene-container" id="scene">
+        <svg viewBox="0 0 200 200">
+            <defs>
+                <linearGradient id="luxuryGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#996515" />
+                    <stop offset="30%" stop-color="#D4AF37" />
+                    <stop offset="50%" stop-color="#FFFFE0" />
+                    <stop offset="70%" stop-color="#D4AF37" />
+                    <stop offset="100%" stop-color="#8A6E2F" />
+                </linearGradient>
+
+                <linearGradient id="shineGradient" x1="0%" y1="0%" x2="0%" y2="100%" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="transparent" />
+                    <stop offset="10%" stop-color="rgba(255, 255, 255, 0.9)" />
+                    <stop offset="20%" stop-color="transparent" />
+                </linearGradient>
+            </defs>
+
+            <!-- Back Arc Guide (Subtle) -->
+            <!-- A partial circle around the shield -->
+            <path class="arc-guide" d="M 40 100 A 60 60 0 1 1 160 100" />
+
+            <!-- Shield Shape -->
+            <g transform="translate(100, 100) scale(0.8) translate(-100, -100)">
+                <path id="shield" class="shield-base"
+                    d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+                <!-- Shield Shine Copy -->
+                <path id="shieldShine" class="shine-effect"
+                    d="M 60 50 L 140 50 L 140 110 C 140 150 140 150 100 180 C 60 150 60 150 60 110 L 60 50 Z" />
+            </g>
+
+            <!-- Precision Arc (The moving swoosh) -->
+            <!-- Draw a dynamic arc that sweeps around -->
+            <!-- Path: Start at left, arc over top to right -->
+            <path id="precisionArc" class="precision-arc" d="M 40 100 A 60 60 0 0 1 160 100" />
+
+        </svg>
+
+        <div class="label-text" id="label">Faster Results, Fewer Visits</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+            const shield = document.getElementById('shield');
+            const precisionArc = document.getElementById('precisionArc');
+            const shieldShine = document.getElementById('shieldShine');
+            const shineGradient = document.getElementById('shineGradient');
+            const label = document.getElementById('label');
+
+            function playSequence() {
+                // RESET
+                scene.style.opacity = '1';
+                scene.style.transition = 'opacity 1s ease';
+
+                shield.style.transition = 'none';
+                shield.style.opacity = '0';
+                shield.style.strokeDashoffset = '400';
+                shield.style.transform = 'scale(0.9)'; // Start slightly smaller
+
+                precisionArc.style.transition = 'none';
+                precisionArc.style.opacity = '0';
+                precisionArc.style.strokeDashoffset = '300';
+
+                shieldShine.style.opacity = '0';
+
+                label.style.transition = 'none';
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(20px)';
+
+                // 1. Precision Arc Sweeps (Fast then Slow)
+                // Represents speed/efficiency
+                setTimeout(() => {
+                    precisionArc.style.opacity = '1';
+                    // Fast start, very slow end = cubic-bezier(0.1, 0.7, 0.1, 1)
+                    precisionArc.style.transition = 'stroke-dashoffset 1.5s cubic-bezier(0.1, 0.9, 0.2, 1)';
+                    precisionArc.style.strokeDashoffset = '0';
+                }, 300);
+
+                // 2. Shield Anchor Appears (Behind)
+                // Fades in and draws itself shortly after arc starts
+                setTimeout(() => {
+                    shield.style.transition = 'opacity 1s ease, transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275), stroke-dashoffset 1.5s ease';
+                    shield.style.opacity = '1';
+                    shield.style.transform = 'scale(1)'; // "Lands"
+                    shield.style.strokeDashoffset = '0';
+                }, 800);
+
+                // 3. Light Shine Effect on Shield (Top to Bottom)
+                setTimeout(() => {
+                    shieldShine.style.opacity = '0.7';
+                    animateShine();
+                }, 2000);
+
+                // 4. Label Fades In
+                setTimeout(() => {
+                    label.style.transition = 'opacity 1s ease, transform 1s ease';
+                    label.style.opacity = '1';
+                    label.style.transform = 'translateY(0)';
+
+                    label.animate([
+                        { backgroundPosition: '200% center' },
+                        { backgroundPosition: '-200% center' }
+                    ], {
+                        duration: 4000,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+                }, 2200);
+
+                // LOOP
+                setTimeout(() => {
+                    scene.style.opacity = '0';
+                }, 9000);
+
+                setTimeout(() => {
+                    playSequence();
+                }, 10000);
+            }
+
+            function animateShine() {
+                const start = performance.now();
+                function frame(time) {
+                    const elapsed = (time - start) % 3500;
+                    if (elapsed < 1500) {
+                        const progress = elapsed / 1500;
+                        const startY = -50;
+                        const endY = 250;
+                        const pos = startY + (progress * (endY - startY));
+
+                        shineGradient.setAttribute('y1', pos);
+                        shineGradient.setAttribute('y2', pos + 60);
+                    } else {
+                        shineGradient.setAttribute('y1', -100);
+                        shineGradient.setAttribute('y2', -40);
+                    }
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            }
+
+            setTimeout(playSequence, 100);
+        });
+    </script>
+</body>
+
+</html>

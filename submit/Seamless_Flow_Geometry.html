@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seamless Flow Geometry | Patient-First Experience</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --gold-primary: #D4AF37;
+            --gold-light: #F7E7CE;
+            --gold-dark: #8A6E2F;
+            --text-gold: #C5A028;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            background: radial-gradient(circle at center, #1b1b1b 0%, #000000 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Cinzel', serif;
+        }
+
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+
+        svg {
+            width: 300px;
+            height: 300px;
+            overflow: visible;
+        }
+
+        .hexagon-base {
+            fill: none;
+            stroke: url(#luxuryGoldGradient);
+            stroke-width: 2;
+            stroke-linejoin: round;
+            opacity: 0;
+            /* Soft glow as requested */
+            filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.3));
+            transform-origin: center;
+        }
+
+        .hexagon-shine {
+            fill: none;
+            stroke: url(#shineGradient);
+            stroke-width: 2;
+            stroke-linejoin: round;
+            opacity: 0;
+            mix-blend-mode: overlay;
+            transform-origin: center;
+        }
+
+        .center-dot {
+            fill: url(#luxuryGoldGradient);
+            opacity: 0;
+            transform-origin: center;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+        }
+
+        .label-text {
+            margin-top: 50px;
+            font-size: 14px;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: var(--text-gold);
+            opacity: 0;
+            transform: translateY(20px);
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(90deg, #8A6E2F, #FFD700, #F7E7CE, #8A6E2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="scene-container" id="scene">
+        <svg viewBox="0 0 300 300">
+            <defs>
+                <linearGradient id="luxuryGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#996515" />
+                    <stop offset="30%" stop-color="#D4AF37" />
+                    <stop offset="50%" stop-color="#FFFFE0" />
+                    <stop offset="70%" stop-color="#D4AF37" />
+                    <stop offset="100%" stop-color="#8A6E2F" />
+                </linearGradient>
+
+                <!-- Shine Gradient for vertical sweep -->
+                <linearGradient id="shineGradient" x1="0%" y1="0%" x2="0%" y2="100%" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="transparent" />
+                    <stop offset="10%" stop-color="rgba(255, 255, 255, 0.9)" />
+                    <stop offset="20%" stop-color="transparent" />
+                </linearGradient>
+            </defs>
+
+            <!-- Hexagon Group -->
+            <!-- 
+               Center 150, 150. Radius ~100.
+               Points for regular hexagon:
+               Top: 150, 50
+               TopRight: 236.6, 100
+               BotRight: 236.6, 200
+               Bot: 150, 250
+               BotLeft: 63.4, 200
+               TopLeft: 63.4, 100
+            -->
+            <polygon id="hexagon" class="hexagon-base" points="150,50 236.6,100 236.6,200 150,250 63.4,200 63.4,100" />
+
+            <!-- Duplicate for shine effect -->
+            <polygon id="hexagonShine" class="hexagon-shine"
+                points="150,50 236.6,100 236.6,200 150,250 63.4,200 63.4,100" />
+
+            <circle id="dot" class="center-dot" cx="150" cy="150" r="5" />
+        </svg>
+
+        <div class="label-text" id="label">Patient-First Experience</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const scene = document.getElementById('scene');
+            const hexagon = document.getElementById('hexagon');
+            const hexagonShine = document.getElementById('hexagonShine');
+            const dot = document.getElementById('dot');
+            const label = document.getElementById('label');
+            const shineGradient = document.getElementById('shineGradient');
+
+            function playSequence() {
+                // RESET
+                scene.style.opacity = '1';
+                scene.style.transition = 'opacity 1s ease';
+
+                hexagon.style.transition = 'none';
+                hexagon.style.opacity = '0';
+                hexagon.style.transform = 'scale(0.8)';
+                hexagon.style.animation = 'none'; // reset breathing
+
+                hexagonShine.style.transition = 'none';
+                hexagonShine.style.opacity = '0';
+                hexagonShine.style.transform = 'scale(0.8)';
+                hexagonShine.style.animation = 'none';
+
+                dot.style.transition = 'none';
+                dot.style.opacity = '0';
+
+                label.style.transition = 'none';
+                label.style.opacity = '0';
+                label.style.transform = 'translateY(20px)';
+
+                // 1. Center Dot Fades In (Stable)
+                setTimeout(() => {
+                    dot.style.transition = 'opacity 1s ease';
+                    dot.style.opacity = '1';
+                }, 100);
+
+                // 2. Hexagon Fades In & Starts Breathing
+                setTimeout(() => {
+                    // Smooth entry
+                    const entryOptions = 'opacity 1.5s ease, transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                    hexagon.style.transition = entryOptions;
+                    hexagon.style.opacity = '1';
+                    hexagon.style.transform = 'scale(1)';
+
+                    hexagonShine.style.transition = entryOptions;
+                    // Shine stays invisible until light pass, but needs to match transform
+                    // Actually, if we apply breathing animation, we need to sync them.
+                    hexagonShine.style.transform = 'scale(1)';
+
+                    // Start Breathing loop after entry finishes
+                    setTimeout(() => {
+                        hexagon.style.animation = 'breathe 6s ease-in-out infinite';
+                        hexagonShine.style.animation = 'breathe 6s ease-in-out infinite';
+                    }, 1500);
+
+                }, 500);
+
+                // 3. Light Shine Effect (Top to Bottom)
+                // Start a recurring shine loop
+                setTimeout(() => {
+                    hexagonShine.style.opacity = '0.8';
+                    animateShine();
+                }, 2000);
+
+                // 4. Label Fades In
+                setTimeout(() => {
+                    label.style.transition = 'opacity 1s ease, transform 1s ease';
+                    label.style.opacity = '1';
+                    label.style.transform = 'translateY(0)';
+
+                    label.animate([
+                        { backgroundPosition: '200% center' },
+                        { backgroundPosition: '-200% center' }
+                    ], {
+                        duration: 4000,
+                        iterations: Infinity,
+                        easing: 'linear'
+                    });
+                }, 2500);
+
+
+                // LOOP SCENE
+                setTimeout(() => {
+                    scene.style.opacity = '0';
+                }, 9000);
+
+                setTimeout(() => {
+                    playSequence();
+                }, 10000);
+            }
+
+            // CSS Keyframes for breathing
+            const styleSheet = document.createElement("style");
+            styleSheet.innerText = `
+                @keyframes breathe {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.05); } 
+                }
+            `;
+            document.head.appendChild(styleSheet);
+
+            function animateShine() {
+                const start = performance.now();
+
+                function frame(time) {
+                    // Shine loop every 3 seconds
+                    const elapsed = (time - start) % 3000;
+
+                    if (elapsed < 1500) {
+                        const progress = elapsed / 1500;
+                        // Move y1, y2 from top to bottom (approx 0 to 300 in svg space)
+                        const startY = -50;
+                        const endY = 350;
+                        const pos = startY + (progress * (endY - startY));
+
+                        shineGradient.setAttribute('y1', pos);
+                        shineGradient.setAttribute('y2', pos + 80); // Gradient length
+                    } else {
+                        // Reset
+                        shineGradient.setAttribute('y1', -100);
+                        shineGradient.setAttribute('y2', -20);
+                    }
+                    requestAnimationFrame(frame);
+                }
+                requestAnimationFrame(frame);
+            }
+
+            setTimeout(playSequence, 100);
+        });
+    </script>
+</body>
+
+</html>
